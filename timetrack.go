@@ -28,6 +28,11 @@ var (
 var dateLayout string
 
 func intervalString(date time.Time) string {
+	if *interval == "" {
+		fmt.Fprintf(os.Stderr, "invalid interval\n")
+		os.Exit(1)
+	}
+
 	switch (*interval)[0] {
 	case DAY:
 		return date.Format(dateLayout)
