@@ -31,7 +31,7 @@ func intervalString(date time.Time) string {
 		year := date.Year()
 		return fmt.Sprintf("%s %v", date.Month(), year)
 	default:
-		fmt.Fprintf(os.Stderr, "unsupported interval: %q\n", interval)
+		fmt.Fprintf(os.Stderr, "unsupported interval: %q\n", *interval)
 		os.Exit(2)
 	}
 
