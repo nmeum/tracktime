@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"time"
 )
 
@@ -53,17 +54,24 @@ func intervalString(date time.Time) string {
 }
 
 func handleEntries(entries []*parser.Entry) {
-	hours := make(map[string]time.Duration)
+	var keys []string
+
+	workmap := make(map[string]time.Duration)
 	for _, entry := range entries {
 		key := intervalString(entry.Date)
-		hours[key] += entry.Duration
+		workmap[key] += entry.Duration
+
+		keys = append(keys, key)
 	}
 
 	var delta, goalHours time.Duration
 	goalHours = time.Duration(*goal) * time.Hour
 
-	for key, hours := range hours {
+	sort.Strings(keys)
+	for _, key := range keys {
+		hours := workmap[key]
 		delta += (hours - goalHours)
+
 		fmt.Printf("%v\t%v\t| %v\n", key, hours, delta)
 	}
 
