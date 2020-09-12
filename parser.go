@@ -2,14 +2,16 @@ package main
 
 import (
 	"bufio"
-	"fmt"
+	"errors"
 	"io"
+	"regexp"
+	"strconv"
 	"time"
 )
 
 const (
 	defaultLayout = "02.01.2006" // TODO: Make configurable through env
-	lineFormat    = "%s	%04d	%04d	%s"
+	lineFormat    = "^(..*)	([0-9][0-9][0-9][0-9])	([0-9][0-9][0-9][0-9])	(..*)$"
 )
 
 type Entry struct {
@@ -18,67 +20,95 @@ type Entry struct {
 	Description string
 }
 
+type Parser struct {
+	validLine *regexp.Regexp
+	lineNum   uint
+}
+
 // https://en.wikipedia.org/wiki/24-hour_clock#Military_time
-func militaryTime(time uint) (uint, error) {
+func (p *Parser) militaryTime(time int) (int, error) {
 	hours := time / 100
 	minutes := time % 100
 
 	if hours > 24 {
-		return 0, fmt.Errorf("invalid hour")
+		return 0, errors.New("invalid hour")
 	} else if minutes >= 60 {
-		return 0, fmt.Errorf("invalid minute")
+		return 0, errors.New("invalid minute")
 	}
 
 	return (hours * 60) + minutes, nil
 }
 
-func parseEntry(line string) (entry Entry, err error) {
-	var date, desc string
-	var durStart, durEnd uint
-
-	_, err = fmt.Sscanf(line, lineFormat, &date, &durStart, &durEnd, &desc)
-	if err != nil {
-		return Entry{}, err
+func (p *Parser) getFields(line string) (string, int, int, string, error) {
+	matches := p.validLine.FindStringSubmatch(line)
+	if matches == nil {
+		return "", 0, 0, "", errors.New("line does not match format")
 	}
-	entry.Description = desc
 
-	entry.Date, err = time.Parse(defaultLayout, date)
+	durStart, err := strconv.Atoi(matches[2])
 	if err != nil {
-		return Entry{}, err
+		return "", 0, 0, "", err
+	}
+	durEnd, err := strconv.Atoi(matches[3])
+	if err != nil {
+		return "", 0, 0, "", err
+	}
+
+	return matches[1], durStart, durEnd, matches[4], nil
+}
+
+func (p *Parser) parseEntry(line string) (*Entry, error) {
+	date, durStart, durEnd, desc, err := p.getFields(line)
+	if err != nil {
+		return nil, err
+	}
+
+	etime, err := time.Parse(defaultLayout, date)
+	if err != nil {
+		return nil, err
 	}
 
 	if durStart >= durEnd {
-		return Entry{}, ParserError{23, "invalid duration"}
+		return nil, errors.New("invalid duration")
 	}
-	start, err := militaryTime(durStart)
+	start, err := p.militaryTime(durStart)
 	if err != nil {
-		return Entry{}, ParserError{23, "invalid start duration: " + err.Error()}
+		return nil, err
 	}
-	end, err := militaryTime(durEnd)
+	end, err := p.militaryTime(durEnd)
 	if err != nil {
-		return Entry{}, ParserError{23, "invalid end duration: " + err.Error()}
+		return nil, err
 	}
 
-	entry.Duration = time.Duration(end-start) * time.Minute
-	return entry, nil
+	duration := time.Duration(end-start) * time.Minute
+	return &Entry{etime, duration, desc}, nil
 }
 
-func parseEntries(r io.Reader) (entries []Entry, err error) {
+func (p *Parser) ParseEntries(r io.Reader) ([]*Entry, error) {
+	var entries []*Entry
+
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
+		p.lineNum++
 		line := scanner.Text()
-		entry, err := parseEntry(line)
+
+		entry, err := p.parseEntry(line)
 		if err != nil {
-			return entries, err
+			return entries, ParserError{p.lineNum, err.Error()}
 		}
 
 		entries = append(entries, entry)
 	}
 
-	err = scanner.Err()
+	err := scanner.Err()
 	if err != nil {
 		return entries, err
 	}
 
 	return entries, nil
+}
+
+func NewParser() *Parser {
+	validLine := regexp.MustCompile(lineFormat)
+	return &Parser{validLine, 0}
 }

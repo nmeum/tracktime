@@ -27,7 +27,8 @@ func main() {
 	}
 	defer file.Close()
 
-	entries, err := parseEntries(file)
+	parser := NewParser()
+	entries, err := parser.ParseEntries(file)
 	if err != nil {
 		log.Fatal(err)
 	}
