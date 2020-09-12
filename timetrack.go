@@ -11,6 +11,7 @@ import (
 var (
 	goal     = flag.Int("h", 8, "hours per interval")
 	interval = flag.String("i", "d", "interval for working hours")
+	total    = flag.Bool("t", false, "output total delta")
 )
 
 const (
@@ -52,7 +53,9 @@ func handleEntries(entries []*Entry) {
 		fmt.Printf("%v\t\t%v\t| %v\n", key, hours, delta)
 	}
 
-	fmt.Printf("\n---\n\nCurrent overall delta: %v\n", delta)
+	if *total {
+		fmt.Printf("\n---\n\nCurrent overall delta: %v\n", delta)
+	}
 }
 
 func main() {
