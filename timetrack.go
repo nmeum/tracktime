@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"time"
 )
 
@@ -67,7 +66,7 @@ func handleEntries(entries []*parser.Entry) {
 	var delta, goalHours time.Duration
 	goalHours = time.Duration(*goal) * time.Hour
 
-	sort.Strings(keys)
+	// Output in same order as specified in input file
 	for _, key := range keys {
 		hours := workmap[key]
 		delta += (hours - goalHours)
