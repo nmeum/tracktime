@@ -1,12 +1,14 @@
-package main
+package parser
 
 import (
 	"testing"
 	"time"
 )
 
+const testLayout = "02.01.2006"
+
 func getTime(t *testing.T, input string) time.Time {
-	ti, err := time.Parse(defaultLayout, input)
+	ti, err := time.Parse(testLayout, input)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -48,7 +50,7 @@ func TestParseEntryPositive(t *testing.T) {
 		},
 	}
 
-	parser := NewParser(defaultLayout)
+	parser := NewParser(testLayout)
 	for _, test := range tests {
 		entry, err := parser.parseEntry(test.Input)
 		if err != nil {

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"github.com/nmeum/timetrack/parser"
+
 	"flag"
 	"fmt"
 	"log"
@@ -50,7 +52,7 @@ func intervalString(date time.Time) string {
 	panic("unreachable")
 }
 
-func handleEntries(entries []*Entry) {
+func handleEntries(entries []*parser.Entry) {
 	hours := make(map[string]time.Duration)
 	for _, entry := range entries {
 		key := intervalString(entry.Date)
@@ -85,8 +87,8 @@ func main() {
 	}
 	defer file.Close()
 
-	parser := NewParser(defaultLayout)
-	entries, err := parser.ParseEntries(file)
+	p := parser.NewParser(defaultLayout)
+	entries, err := p.ParseEntries(file)
 	if err != nil {
 		log.Fatal(err)
 	}
