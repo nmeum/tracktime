@@ -62,7 +62,7 @@ func handleEntries(entries []*Entry) {
 
 	for key, hours := range hours {
 		delta += (hours - goalHours)
-		fmt.Printf("%v\t\t%v\t| %v\n", key, hours, delta)
+		fmt.Printf("%v\t%v\t| %v\n", key, hours, delta)
 	}
 
 	if *total {
