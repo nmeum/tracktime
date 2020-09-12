@@ -38,7 +38,7 @@ func intervalString(date time.Time) string {
 		return date.Format(dateLayout)
 	case WEEK:
 		year, week := date.ISOWeek()
-		return fmt.Sprintf("w%vy%v", week, year)
+		return fmt.Sprintf("W%v %v", week, year)
 	case MONTH:
 		year := date.Year()
 		return fmt.Sprintf("%s %v", date.Month(), year)
