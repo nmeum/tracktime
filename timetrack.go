@@ -8,13 +8,10 @@ import (
 	"time"
 )
 
-var (
-	goal     = flag.Int("h", 8, "hours per interval")
-	interval = flag.String("i", "d", "interval for working hours")
-	total    = flag.Bool("t", false, "output total delta")
+const (
+	layoutEnv     = "TIMETRACK_FORMAT"
+	defaultLayout = "02.01.2006"
 )
-
-const defaultLayout = "02.01.2006"
 
 const (
 	DAY   = 'd'
@@ -22,10 +19,18 @@ const (
 	MONTH = 'm'
 )
 
+var (
+	goal     = flag.Int("h", 8, "hours per interval")
+	interval = flag.String("i", "d", "interval for working hours")
+	total    = flag.Bool("t", false, "output total delta")
+)
+
+var dateLayout string
+
 func intervalString(date time.Time) string {
 	switch (*interval)[0] {
 	case DAY:
-		return date.Format(defaultLayout)
+		return date.Format(dateLayout)
 	case WEEK:
 		year, week := date.ISOWeek()
 		return fmt.Sprintf("w%vy%v", week, year)
@@ -79,6 +84,11 @@ func main() {
 	entries, err := parser.ParseEntries(file)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	dateLayout = os.Getenv(layoutEnv)
+	if dateLayout == "" {
+		dateLayout = defaultLayout
 	}
 
 	handleEntries(entries)
