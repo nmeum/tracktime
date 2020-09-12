@@ -9,10 +9,7 @@ import (
 	"time"
 )
 
-const (
-	defaultLayout = "02.01.2006" // TODO: Make configurable through env
-	lineFormat    = "^(..*)	([0-9][0-9][0-9][0-9])	([0-9][0-9][0-9][0-9])	(..*)$"
-)
+const lineFormat = "^(..*)	([0-9][0-9][0-9][0-9])	([0-9][0-9][0-9][0-9])	(..*)$"
 
 type Entry struct {
 	Date        time.Time
@@ -22,6 +19,7 @@ type Entry struct {
 
 type Parser struct {
 	validLine *regexp.Regexp
+	layout    string
 	lineNum   uint
 }
 
@@ -63,7 +61,7 @@ func (p *Parser) parseEntry(line string) (*Entry, error) {
 		return nil, err
 	}
 
-	etime, err := time.Parse(defaultLayout, date)
+	etime, err := time.Parse(p.layout, date)
 	if err != nil {
 		return nil, err
 	}
@@ -108,7 +106,7 @@ func (p *Parser) ParseEntries(r io.Reader) ([]*Entry, error) {
 	return entries, nil
 }
 
-func NewParser() *Parser {
+func NewParser(layout string) *Parser {
 	validLine := regexp.MustCompile(lineFormat)
-	return &Parser{validLine, 0}
+	return &Parser{validLine, layout, 0}
 }

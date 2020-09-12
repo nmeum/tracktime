@@ -48,7 +48,7 @@ func TestParseEntryPositive(t *testing.T) {
 		},
 	}
 
-	parser := NewParser()
+	parser := NewParser(defaultLayout)
 	for _, test := range tests {
 		entry, err := parser.parseEntry(test.Input)
 		if err != nil {

@@ -14,6 +14,8 @@ var (
 	total    = flag.Bool("t", false, "output total delta")
 )
 
+const defaultLayout = "02.01.2006"
+
 const (
 	DAY   = 'd'
 	WEEK  = 'w'
@@ -73,7 +75,7 @@ func main() {
 	}
 	defer file.Close()
 
-	parser := NewParser()
+	parser := NewParser(defaultLayout)
 	entries, err := parser.ParseEntries(file)
 	if err != nil {
 		log.Fatal(err)
