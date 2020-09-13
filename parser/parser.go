@@ -82,7 +82,7 @@ func (p *Parser) parseEntry(line string) (*Entry, error) {
 	return &Entry{etime, duration, desc}, nil
 }
 
-func (p *Parser) ParseEntries(r io.Reader) ([]*Entry, error) {
+func (p *Parser) ParseEntries(fn string, r io.Reader) ([]*Entry, error) {
 	var entries []*Entry
 
 	scanner := bufio.NewScanner(r)
@@ -92,7 +92,7 @@ func (p *Parser) ParseEntries(r io.Reader) ([]*Entry, error) {
 
 		entry, err := p.parseEntry(line)
 		if err != nil {
-			return entries, ParserError{p.lineNum, err.Error()}
+			return entries, ParserError{fn, p.lineNum, err.Error()}
 		}
 
 		entries = append(entries, entry)

@@ -5,10 +5,11 @@ import (
 )
 
 type ParserError struct {
+	Name string
 	Line uint
 	Msg  string
 }
 
 func (p ParserError) Error() string {
-	return fmt.Sprintf("%s:%d %s", "stdin", p.Line, p.Msg)
+	return fmt.Sprintf("%s:%d %s", p.Name, p.Line, p.Msg)
 }

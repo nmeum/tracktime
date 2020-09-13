@@ -92,14 +92,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	file, err := os.Open(flag.Arg(0))
+	fp := flag.Arg(0)
+	file, err := os.Open(fp)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
 	p := parser.NewParser(defaultLayout)
-	entries, err := p.ParseEntries(file)
+	entries, err := p.ParseEntries(fp, file)
 	if err != nil {
 		log.Fatal(err)
 	}
