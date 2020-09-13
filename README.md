@@ -5,11 +5,11 @@ Small utility for tracking working hours in a plain text file.
 ## Usage
 
 Tracking working hours is complicated as one usually has to consider
-holidays and vacations for calculating required working hours. For this
-reason, this tool takes a different approach. The tool operates under
-the assumption that one has to work the same amount of hours each day.
-To compensate overtime, the tool additionally tracks a delta between
-tracked workdays.
+holidays and vacations for determining required working hours. This tool
+takes a different approach by assuming that one has to work the same
+amount of hours on each tracked day. Based on this assumption, the tool
+calculates a delta between all tracked workdays to determine the current
+overtime.
 
 For instance, if one has to work 8 hours each day and worked 9 hours on
 Monday only 7 hours would be required on Tuesday:
@@ -21,10 +21,10 @@ Monday only 7 hours would be required on Tuesday:
 	06.01.2020      9h0m0s  | 1h0m0s
 	07.01.2020      7h0m0s  | 0s
 
-The last column of the `timetrack` output represents the delta. As
-illustrated, it is zero on the 7th of January even though only 7 hours
-of work were done. The overtime done on the 6th of January is used to
-compensate for this.
+The last column of the `timetrack` output represents the described
+delta. In this example, it is zero on the 7th of January even though
+only 7 hours of work were done. The overtime done on the 6th of January
+is used to compensate for the shortage.
 
 ## Input format
 
