@@ -29,9 +29,9 @@ func (p *Parser) militaryTime(time int) (int, error) {
 	minutes := time % 100
 
 	if hours > 24 {
-		return 0, errors.New("invalid hour")
+		return 0, errors.New("invalid hour in duration")
 	} else if minutes >= 60 {
-		return 0, errors.New("invalid minute")
+		return 0, errors.New("invalid minute in duration")
 	}
 
 	return (hours * 60) + minutes, nil
