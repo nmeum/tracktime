@@ -29,6 +29,14 @@ var (
 
 var dateLayout string
 
+func max(a, b int) int {
+	if a > b {
+		return a
+	} else {
+		return b
+	}
+}
+
 func durationString(duration time.Duration) string {
 	if *seconds {
 		return fmt.Sprintf("%v", duration.Seconds())
@@ -62,6 +70,7 @@ func intervalString(date time.Time) string {
 
 func handleEntries(entries []*parser.Entry) {
 	var keys []string
+	var maxdurlen int
 
 	workmap := make(map[string]time.Duration)
 	for _, entry := range entries {
@@ -69,8 +78,11 @@ func handleEntries(entries []*parser.Entry) {
 		if _, ok := workmap[key]; !ok {
 			keys = append(keys, key)
 		}
-
 		workmap[key] += entry.Duration
+
+		// Date should always have the same with. Only duration
+		// requires padding based on the maximum duration length.
+		maxdurlen = max(maxdurlen, len(fmt.Sprintf("%v", workmap[key])))
 	}
 
 	var delta, goalHours time.Duration
@@ -81,7 +93,8 @@ func handleEntries(entries []*parser.Entry) {
 		hours := workmap[key]
 		delta += (hours - goalHours)
 
-		fmt.Printf("%v\t%v\t| %v\n", key, hours, durationString(delta))
+		// Output should always be aligned at the pipe character.
+		fmt.Printf("%v %*v | %v\n", key, maxdurlen, hours, durationString(delta))
 	}
 }
 
