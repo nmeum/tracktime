@@ -78,6 +78,10 @@ func (p *Parser) parseEntry(line string) (*Entry, error) {
 		return nil, err
 	}
 
+	// Add start duration to entry date, allows reconstructing the
+	// absolute start time (and end time) of the given entry.
+	etime = etime.Add(time.Duration(start) * time.Minute)
+
 	duration := time.Duration(end-start) * time.Minute
 	return &Entry{etime, duration, desc}, nil
 }
