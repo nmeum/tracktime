@@ -34,12 +34,17 @@ following meaning:
 1. Workday. Multiple entries for the same day are allowed. The
    utilized date format can be customized using the `TIMETRACK_FORMAT`
    environment variable. Refer to the documentation of the
-   [go time pkg](https://golang.org/pkg/time/#pkg-constants) for more
+   [Go time pkg](https://golang.org/pkg/time/#pkg-constants) for more
    information.
 2. Starting time of the described activity without a hours/minutes
    separator and padded with zeros to four digits.
 3. End time of the described activity.
 4. Description of the activity.
+
+A parser for the input format is available in the `parser/`
+subdirectory. The parser can be imported as a Go library to write custom
+tooling, e.g. format conversion tools for importing data into existing
+time tracking systems.
 
 ## Installation
 
