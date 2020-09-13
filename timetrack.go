@@ -66,9 +66,11 @@ func handleEntries(entries []*parser.Entry) {
 	workmap := make(map[string]time.Duration)
 	for _, entry := range entries {
 		key := intervalString(entry.Date)
-		workmap[key] += entry.Duration
+		if _, ok := workmap[key]; !ok {
+			keys = append(keys, key)
+		}
 
-		keys = append(keys, key)
+		workmap[key] += entry.Duration
 	}
 
 	var delta, goalHours time.Duration
