@@ -25,7 +25,6 @@ var (
 	goal     = flag.Int("h", 8, "hours per interval")
 	interval = flag.String("i", "d", "interval for working hours")
 	seconds  = flag.Bool("s", false, "output duration in seconds")
-	total    = flag.Bool("t", false, "output total delta")
 )
 
 var dateLayout string
@@ -81,10 +80,6 @@ func handleEntries(entries []*parser.Entry) {
 		delta += (hours - goalHours)
 
 		fmt.Printf("%v\t%v\t| %v\n", key, hours, durationString(delta))
-	}
-
-	if *total {
-		fmt.Printf("\n---\n\nCurrent overall delta: %v\n", durationString(delta))
 	}
 }
 
