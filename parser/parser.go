@@ -85,6 +85,9 @@ func (p *Parser) parseEntry(line string) (*Entry, error) {
 func (p *Parser) ParseEntries(fn string, r io.Reader) ([]*Entry, error) {
 	var entries []*Entry
 
+	// Reset line number information
+	p.lineNum = 0
+
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		p.lineNum++
