@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/nmeum/timetrack/parser"
+	"github.com/nmeum/tracktime/parser"
 
 	"flag"
 	"fmt"
@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	layoutEnv     = "TIMETRACK_FORMAT"
+	layoutEnv     = "TRACKTIME_FORMAT"
 	defaultLayout = "02.01.2006"
 )
 

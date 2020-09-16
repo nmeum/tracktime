@@ -1,4 +1,4 @@
-# timetrack
+# tracktime
 
 Small utility for tracking working hours in a plain text file.
 
@@ -14,14 +14,14 @@ overtime.
 For instance, if one has to work 8 hours each day and worked 9 hours on
 Monday only 7 hours would be required on Tuesday:
 
-	$ cat ~/.timetrack
+	$ cat ~/.tracktime
 	06.01.2020	0900	1800	Important work stuff
 	07.01.2020	1000	1700	More important work stuff
-	$ timetrack -h 8 ~/.timetrack
+	$ tracktime -h 8 ~/.tracktime
 	06.01.2020      9h0m0s  | 1h0m0s
 	07.01.2020      7h0m0s  | 0s
 
-The last column of the `timetrack` output represents the described
+The last column of the `tracktime` output represents the described
 delta. In this example, it is zero on the 7th of January even though
 only 7 hours of work were done. The overtime done on the 6th of January
 is used to compensate for the shortage.
@@ -32,7 +32,7 @@ The input format uses four tab-separated fields. The fields have the
 following meaning:
 
 1. Workday. Multiple entries for the same day are allowed. The
-   utilized date format can be customized using the `TIMETRACK_FORMAT`
+   utilized date format can be customized using the `TRACKTIME_FORMAT`
    environment variable. Refer to the documentation of the
    [Go time pkg](https://golang.org/pkg/time/#pkg-constants) for more
    information.
@@ -50,7 +50,7 @@ time tracking systems.
 
 No dependencies, simply use `go get`:
 
-	$ go get github.com/nmeum/timetrack
+	$ go get github.com/nmeum/tracktime
 
 ## License
 
