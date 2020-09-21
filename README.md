@@ -12,7 +12,8 @@ calculates a delta between all tracked workdays to determine the current
 overtime.
 
 For instance, if one has to work 8 hours each day and worked 9 hours on
-Monday only 7 hours would be required on Tuesday:
+the 6th of January only 7 hours of work would be required on the 7th of
+January:
 
 	$ cat ~/.tracktime
 	06.01.2020	0900	1800	Important work stuff
