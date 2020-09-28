@@ -11,11 +11,6 @@ import (
 )
 
 const (
-	layoutEnv     = "TRACKTIME_FORMAT"
-	defaultLayout = "02.01.2006"
-)
-
-const (
 	DAY   = 'd'
 	WEEK  = 'w'
 	MONTH = 'm'
@@ -114,15 +109,12 @@ func main() {
 	}
 	defer file.Close()
 
-	p := parser.NewParser(defaultLayout)
+	dateLayout = parser.DefaultTimeFormat()
+	p := parser.NewParser(dateLayout)
+
 	entries, err := p.ParseEntries(fp, file)
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	dateLayout = os.Getenv(layoutEnv)
-	if dateLayout == "" {
-		dateLayout = defaultLayout
 	}
 
 	handleEntries(entries)

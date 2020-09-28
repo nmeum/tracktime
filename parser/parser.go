@@ -4,12 +4,18 @@ import (
 	"bufio"
 	"errors"
 	"io"
+	"os"
 	"regexp"
 	"strconv"
 	"time"
 )
 
 const lineFormat = "^(..*)	([0-9][0-9][0-9][0-9])	([0-9][0-9][0-9][0-9])	(..*)$"
+
+const (
+	layoutEnv     = "TRACKTIME_FORMAT"
+	defaultLayout = "02.01.2006"
+)
 
 type Entry struct {
 	Date        time.Time
@@ -116,4 +122,13 @@ func (p *Parser) ParseEntries(fn string, r io.Reader) ([]*Entry, error) {
 func NewParser(layout string) *Parser {
 	validLine := regexp.MustCompile(lineFormat)
 	return &Parser{validLine, layout, 0}
+}
+
+func DefaultTimeFormat() string {
+	dateLayout := os.Getenv(layoutEnv)
+	if dateLayout == "" {
+		dateLayout = defaultLayout
+	}
+
+	return dateLayout
 }
