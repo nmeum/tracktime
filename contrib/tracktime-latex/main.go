@@ -15,6 +15,22 @@ type Table [][]string
 
 const outputFormat = time.RFC822
 
+func escapeCell(cell string) string {
+	var builder strings.Builder
+	builder.Grow(len(cell))
+
+	for _, r := range cell {
+		switch r {
+		case '&':
+			builder.WriteString("\\&")
+		default:
+			builder.WriteRune(r)
+		}
+	}
+
+	return builder.String()
+}
+
 func printTabular(w io.Writer, rows Table) {
 	numCols := len(rows[0])
 
@@ -33,7 +49,7 @@ func printTabular(w io.Writer, rows Table) {
 				delim = "\\\\"
 			}
 
-			fmt.Fprintf(w, "%v %v ", col, delim)
+			fmt.Fprintf(w, "%v %v ", escapeCell(col), delim)
 		}
 		fmt.Fprintf(w, "\n")
 	}
