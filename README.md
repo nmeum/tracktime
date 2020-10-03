@@ -53,6 +53,9 @@ No dependencies, simply use `go get`:
 
 	$ go get github.com/nmeum/tracktime
 
+Additional utilities are available in the `contrib/` directory and can
+be installed separately, also through `go get`.
+
 ## License
 
 This program is free software: you can redistribute it and/or modify it
