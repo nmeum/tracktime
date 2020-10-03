@@ -75,7 +75,7 @@ func handleEntries(entries []*parser.Entry) {
 		}
 		workmap[key] += entry.Duration
 
-		// Date should always have the same with. Only duration
+		// Date should always have the same width. Only duration
 		// requires padding based on the maximum duration length.
 		maxdurlen = max(maxdurlen, len(fmt.Sprintf("%v", workmap[key])))
 	}
