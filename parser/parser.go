@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-const lineFormat = "^(..*)	([0-9][0-9][0-9][0-9])	([0-9][0-9][0-9][0-9])	(..*)$"
+const lineFormat = "^\\+?(..*)	([0-9][0-9][0-9][0-9])	([0-9][0-9][0-9][0-9])	(..*)$"
 
 const (
 	layoutEnv     = "TRACKTIME_FORMAT"
@@ -21,6 +21,7 @@ type Entry struct {
 	Date        time.Time
 	Duration    time.Duration
 	Description string
+	BonusWork   bool
 }
 
 type Parser struct {
@@ -43,26 +44,30 @@ func (p *Parser) militaryTime(time int) (int, error) {
 	return (hours * 60) + minutes, nil
 }
 
-func (p *Parser) getFields(line string) (string, int, int, string, error) {
+func (p *Parser) getFields(line string) (bool, string, int, int, string, error) {
 	matches := p.validLine.FindStringSubmatch(line)
 	if matches == nil {
-		return "", 0, 0, "", errors.New("line does not match format")
+		return false, "", 0, 0, "", errors.New("line does not match format")
 	}
 
 	durStart, err := strconv.Atoi(matches[2])
 	if err != nil {
-		return "", 0, 0, "", err
+		return false, "", 0, 0, "", err
 	}
 	durEnd, err := strconv.Atoi(matches[3])
 	if err != nil {
-		return "", 0, 0, "", err
+		return false, "", 0, 0, "", err
 	}
 
-	return matches[1], durStart, durEnd, matches[4], nil
+	// If the line starts with a “+” character, then count this as
+	// bonus working time (e.g. working on the weekend).
+	bonusEntry := matches[0][0] == '+'
+
+	return bonusEntry, matches[1], durStart, durEnd, matches[4], nil
 }
 
 func (p *Parser) parseEntry(line string) (*Entry, error) {
-	date, durStart, durEnd, desc, err := p.getFields(line)
+	bonus, date, durStart, durEnd, desc, err := p.getFields(line)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +94,7 @@ func (p *Parser) parseEntry(line string) (*Entry, error) {
 	etime = etime.Add(time.Duration(start) * time.Minute)
 
 	duration := time.Duration(end-start) * time.Minute
-	return &Entry{etime, duration, desc}, nil
+	return &Entry{etime, duration, desc, bonus}, nil
 }
 
 func (p *Parser) ParseEntries(fn string, r io.Reader) ([]*Entry, error) {

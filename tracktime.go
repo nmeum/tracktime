@@ -10,6 +10,11 @@ import (
 	"time"
 )
 
+type TrackedDate struct {
+	Duration  time.Duration
+	BonusWork bool
+}
+
 const (
 	DAY   = 'd'
 	WEEK  = 'w'
@@ -67,17 +72,21 @@ func handleEntries(entries []*parser.Entry) {
 	var keys []string
 	var maxdurlen int
 
-	workmap := make(map[string]time.Duration)
+	workmap := make(map[string]TrackedDate)
 	for _, entry := range entries {
 		key := intervalString(entry.Date)
-		if _, ok := workmap[key]; !ok {
+
+		e, ok := workmap[key]
+		if !ok {
 			keys = append(keys, key)
+		} else if e.BonusWork && !entry.BonusWork {
+			fmt.Fprintf(os.Stderr, "WARNING: Only some entries for %v are bonus hours\n", entry.Date.String())
 		}
-		workmap[key] += entry.Duration
+		workmap[key] = TrackedDate{e.Duration + entry.Duration, entry.BonusWork}
 
 		// Date should always have the same width. Only duration
 		// requires padding based on the maximum duration length.
-		maxdurlen = max(maxdurlen, len(fmt.Sprintf("%v", workmap[key])))
+		maxdurlen = max(maxdurlen, len(fmt.Sprintf("%v", e.Duration)))
 	}
 
 	var delta, goalHours time.Duration
@@ -85,8 +94,14 @@ func handleEntries(entries []*parser.Entry) {
 
 	// Output in same order as specified in input file
 	for _, key := range keys {
-		hours := workmap[key]
-		delta += (hours - goalHours)
+		e := workmap[key]
+		hours := e.Duration
+
+		if e.BonusWork {
+			delta += hours
+		} else {
+			delta += (hours - goalHours)
+		}
 
 		// Output should always be aligned at the pipe character.
 		fmt.Printf("%v %*v | %v\n", key, maxdurlen, hours, durationString(delta))
