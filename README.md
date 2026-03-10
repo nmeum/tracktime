@@ -51,7 +51,7 @@ time tracking systems.
 
 No dependencies, simply use `go get`:
 
-	$ go get git.8pit.net/tracktime
+	$ go install git.8pit.net/tracktime@latest
 
 Additional utilities are available in the `contrib/` directory and can
 be installed separately, also through `go get`.
