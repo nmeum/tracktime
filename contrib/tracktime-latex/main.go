@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/nmeum/tracktime/parser"
+	"git.8pit.net/tracktime/parser"
 
 	"fmt"
 	"io"

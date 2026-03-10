@@ -51,7 +51,7 @@ time tracking systems.
 
 No dependencies, simply use `go get`:
 
-	$ go get github.com/nmeum/tracktime
+	$ go get git.8pit.net/tracktime
 
 Additional utilities are available in the `contrib/` directory and can
 be installed separately, also through `go get`.
